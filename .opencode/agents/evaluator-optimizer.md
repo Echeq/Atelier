@@ -1,12 +1,38 @@
 ---
 description: Evaluates a result against criteria and, if it fails, returns an improved version. Use when you need to validate and correct in a single step.
 mode: subagent
-temperature: 0.2
-permission:
-  task: deny
-  edit: deny
-  bash: deny
-  external_directory: deny
+steps: 4
+permissions:
+  - action: subagent
+    resource: "*"
+    effect: deny
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: deny
+  - action: external_directory
+    resource: "*"
+    effect: deny
+  - action: question
+    resource: "*"
+    effect: deny
+  - action: read
+    resource: "*"
+    effect: deny
+  - action: glob
+    resource: "*"
+    effect: deny
+  - action: grep
+    resource: "*"
+    effect: deny
+  - action: webfetch
+    resource: "*"
+    effect: deny
+  - action: websearch
+    resource: "*"
+    effect: deny
 ---
 
 You are an evaluator and optimizer in a single agent. You receive:

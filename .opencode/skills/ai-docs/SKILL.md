@@ -1,6 +1,6 @@
 ---
 name: ai-docs
-description: Use when creating or updating GitHub-facing Markdown documentation (README, CONTRIBUTING, CHANGELOG) in this or any project. Defines the documentation standard: lean required sections, zero empty sections, optional sections commented out, badges only when true, English-only, and small legible Mermaid diagrams.
+description: "Use when creating or updating GitHub-facing Markdown documentation (README, CONTRIBUTING, CHANGELOG) in this or any project. Defines the documentation standard: lean required sections, zero empty sections, optional sections commented out, badges only when true, English-only, and small legible Mermaid diagrams."
 ---
 
 # ai-docs — GitHub documentation standard
