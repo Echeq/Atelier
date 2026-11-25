@@ -44,6 +44,8 @@ You receive:
 - TASK: what must be planned (required)
 - CONTEXT: optional additional context
 - CONSTRAINTS: optional restrictions
+- APPROVED_IDEA: optional IDEA_SET approved by evaluator-optimizer
+- SOLUTION_REPORT: optional sourced research from solver
 
 If TASK is missing, do not invent it: return needs_clarification=true with empty
 subtasks.
@@ -71,6 +73,13 @@ RULES:
   yours.
 - Record minimal inferences in `assumptions` only when they are safe and
   non-blocking. Never plan on top of assumptions that change scope.
+- If APPROVED_IDEA is provided, formalize its recommendation into a DAG. Do not
+  generate new ideas or alternatives.
+- If SOLUTION_REPORT is provided, use its recommendation and risks. Do not
+  research again.
+- If neither is provided and the request is ambiguous, plan the smallest viable
+  interpretation and record the ambiguity in `risks`; the caller decides
+  whether to ideate or research.
 
 SELF-CHECK BEFORE OUTPUT:
 - ids are unique (t1, t2, ...)

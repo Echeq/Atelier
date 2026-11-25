@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-> An OpenCode V2 project scaffold: a supervisor agent, three subagents, slash
+> An OpenCode V2 project scaffold: a supervisor agent, five subagents, slash
 > commands, and skills ready to clone and adapt. No application code.
 
 ## Requirements
@@ -56,8 +56,13 @@ only a short summary. The `verification` skill defines the reporting rules.
   `subagent` tool (`agent`, `description`, `prompt`) and `TASK:`, `RESULT:`,
   plus optional `CRITERIA:`. It returns a JSON verdict and an improved result
   when it fails.
-- Plan a multi-deliverable request: invoke the `planner` subagent with `TASK:`
-  plus optional `CONTEXT:`/`CONSTRAINTS:`; it returns a JSON DAG of subtasks.
+- Plan a multi-deliverable request: `atelier` triages it. Clear work goes to
+  `planner`; ambiguous work goes to `ideator`, then `evaluator-optimizer`
+  (`MODE=plan`, 0.6), then `planner`; a blocked technical unknown goes to
+  `solver`, then `planner`.
+- Research a blocker: invoke `solver` with `PROBLEM`, `CONTEXT`, `WHAT_TRIED`,
+  `CONSTRAINTS`, and an optional `BUDGET`; it returns SOURCE-backed
+  SOLUTION_REPORT JSON.
 - Execute one subtask: invoke the `worker` subagent with a self-contained
   prompt (`TASK:`, `INPUTS:`, `EXPECTED_OUTPUT:`); it returns a JSON result.
 - Execute a plan: for a multi-deliverable request, `atelier` invokes the
@@ -83,23 +88,60 @@ report arrives.
 ## Architecture
 
 ```mermaid
-flowchart LR
-  A[atelier] -->|TASK| P[planner]
+flowchart TB
+  A((Atelier))
+
+  subgraph Planning
+    direction LR
+    P[planner]
+    I[ideator]
+    S[solver]
+  end
+
+  subgraph Execution
+    W[worker]
+  end
+
+  subgraph Gates
+    E[evaluator-optimizer]
+  end
+
+  A -->|TASK| P
   P -->|DAG| A
-  A -->|subtask| W[worker]
+  A -. ambiguous .-> I
+  I -. IDEA_SET .-> A
+  A -. blocked .-> S
+  S -. SOLUTION_REPORT .-> A
+  A -->|subtask| W
   W -->|WORKER_RESULT| A
-  A -->|aggregate| E[evaluator-optimizer]
+  A -->|aggregate| E
   E -->|verdict| A
 ```
 
 `atelier` is the only long-lived session. It asks the planner for a DAG,
 launches independent workers in parallel, collects their reports across turns,
-and sends the aggregate to the evaluator gate. The subagents do the work; the
-supervisor keeps context small by working from reports rather than raw outputs.
+and sends the aggregate to the evaluator gate. The subagents do the work, but
+`atelier` is the hub: every specialist returns to it, and it keeps context small
+by working from reports rather than raw outputs.
 
 V2 already runs subagents in background child sessions, so a separate
 orchestrator agent would duplicate that layer and need nested dispatch. Atelier
 schedules the DAG itself at the default depth, with no experimental flags.
+
+### Planning loop
+
+`atelier` triages multi-deliverable work:
+
+- Clear: `planner` directly.
+- Ambiguous: `ideator` generates options, `evaluator-optimizer` gates them with
+  `MODE=plan` and a 60% threshold, then `planner` formalizes the approved idea.
+- Blocked: `solver` researches the blocker with sources, then `planner`
+  formalizes the solution.
+
+`evaluator-optimizer` separates `HARD_CRITERIA` (all must pass) from
+`CRITERIA` (soft, scored against the threshold). The final gate uses
+`MODE=final` and an 80% threshold plus acceptance evidence.
+`atelier` orchestrates these specialists; the planner never launches subagents.
 
 ## Project structure
 
@@ -116,7 +158,9 @@ Atelier/
    ├─ agents/
    │  ├─ atelier.md
    │  ├─ evaluator-optimizer.md
+   │  ├─ ideator.md
    │  ├─ planner.md
+   │  ├─ solver.md
    │  └─ worker.md
    ├─ commands/
    │  ├─ setup.md

@@ -12,6 +12,8 @@ table. Never fix or edit outputs — report failures with the raw JSON. Every
    - `.opencode/agents/planner.md`
    - `.opencode/agents/worker.md`
    - `.opencode/agents/evaluator-optimizer.md`
+   - `.opencode/agents/ideator.md`
+   - `.opencode/agents/solver.md`
    If any is missing, report FAIL and stop.
 
 2. Invoke the planner subagent with the `subagent` tool (`agent: "planner"`)
@@ -48,7 +50,10 @@ table. Never fix or edit outputs — report failures with the raw JSON. Every
    (`agent: "evaluator-optimizer"`) and:
    TASK: Write a two-line story about a lighthouse.
    RESULT: <the worker output verbatim>
-   CRITERIA: two lines; about a lighthouse.
+   MODE: plan
+   THRESHOLD: 0.6
+   HARD_CRITERIA: two lines; about a lighthouse.
+   CRITERIA: clear and grammatical.
    Wait for its `<subagent>` report before continuing.
 
 7. Parse the evaluator report as strict JSON and check each item:
@@ -61,3 +66,7 @@ table. Never fix or edit outputs — report failures with the raw JSON. Every
 8. Report: compact table (check -> PASS/FAIL) and an overall PASS only if all
    checks pass. State that each run consumes several model calls and that the
    smoke test is structural, not deterministic.
+
+9. `ideator` and `solver` are not exercised by default. Optionally call each
+   once and validate IDEA_SET/SOLUTION_REPORT; report those checks separately
+   from the main PASS/FAIL table.
