@@ -40,6 +40,12 @@ dispatch and no experimental flags.
 OpenCode reloads configuration, agents, commands, and skills automatically; run
 `opencode reload` only if a change does not appear.
 
+### Test output
+
+`tool_output` caps every tool result to 120 lines / 16 KiB. Run tests through
+`scripts/test-summary.sh`: it writes the full log to `.test-output/` and prints
+only a short summary. The `verification` skill defines the reporting rules.
+
 ## Usage
 
 - Start here: `atelier` is the default primary agent (supervisor mode). It
@@ -58,6 +64,8 @@ OpenCode reloads configuration, agents, commands, and skills automatically; run
   planner, validates the DAG, launches independent workers in parallel, retries
   a failed subtask once, skips dependents of a failed subtask, and runs the
   evaluator gate on the final aggregate.
+- Run tests without flooding the conversation: `bash scripts/test-summary.sh
+  <command>`.
 - Verify the pipeline: run `/smoke`; it exercises planner, worker, and
   evaluator and validates the three JSON contracts.
 - Plan a hackathon or rapid project: run `/hackathon setup`; it reads the
@@ -102,6 +110,8 @@ Atelier/
 ├─ opencode.json
 ├─ LICENSE
 ├─ .gitignore
+├─ scripts/
+│  └─ test-summary.sh
 └─ .opencode/
    ├─ agents/
    │  ├─ atelier.md
@@ -116,6 +126,8 @@ Atelier/
       ├─ ai-docs/
       │  ├─ SKILL.md
       │  └─ README-TEMPLATE.md
+      ├─ verification/
+      │  └─ SKILL.md
       └─ hackathon/
          ├─ RULES.md
          ├─ README.md

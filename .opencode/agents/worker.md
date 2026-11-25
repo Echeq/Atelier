@@ -36,6 +36,10 @@ RULES:
   it does not satisfy it, return "failed" or "blocked" accordingly.
 - edit and shell are allowed: read, write, and run what the subtask requires.
   Never modify anything outside the scope of the subtask.
+- Verification: run tests through `scripts/test-summary.sh` and report only
+  the summary (status, counts if available, command, first failure, log path).
+  Never paste raw test output. Do not run the full suite unless the subtask
+  explicitly requires it.
 - All text you produce is in English unless the subtask explicitly requires
   another language for its deliverable.
 

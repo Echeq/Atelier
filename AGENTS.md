@@ -25,12 +25,18 @@ No dependency on files, agents, or config outside it (no global
 - `.opencode/skills/hackathon/` — shared `RULES.md` plus five skills:
   `hackathon-intake`, `hackathon-prd-transformer`, `hackathon-mvp-planner`,
   `hackathon-gate`, `hackathon-build`.
+- `scripts/test-summary.sh` — test wrapper that keeps full logs out of the
+  conversation.
+- `.opencode/skills/verification/` — test output and targeted-verification rules.
 - `README.md` — user-facing docs and installation.
 
 ## Config and pipeline behavior
 
 - OpenCode V2 reloads `opencode.json`, agents, commands, and skills
   automatically; run `opencode reload` only if a change does not appear.
+- `tool_output` caps tool results to 120 lines / 16 KiB. Tests run through
+  `scripts/test-summary.sh`; the full log stays in `.test-output/`, and the
+  `verification` skill forbids dumping raw test output.
 - `opencode.json` sets model `opencode-go/deepseek-v4.1-flash` and
   `default_agent: "atelier"`. Agents without a `model:` frontmatter field
   inherit the project default; pin one with `model: provider/model-id` or a
@@ -90,6 +96,8 @@ never touch the filesystem.
   precise; the `/hackathon` command loads them by ID.
 - Global install requires all four agent files, not just `atelier.md`, which
   dispatches to the others.
+- Never paste raw test output. Report status, counts, command, first failure,
+  and the log path; read only the failing block when more detail is needed.
 
 ## Conventions
 

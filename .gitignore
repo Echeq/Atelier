@@ -13,6 +13,9 @@ Desktop.ini
 # Logs
 *.log
 
+# Test logs
+.test-output/
+
 # opencode-managed files
 .opencode/node_modules/
 .opencode/package.json
