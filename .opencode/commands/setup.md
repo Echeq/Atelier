@@ -13,6 +13,8 @@ You are the interactive project setup for Atelier. Follow these steps exactly.
    - `.opencode/agents/planner.md`
    - `.opencode/agents/worker.md`
    - `.opencode/agents/evaluator-optimizer.md`
+   - `.opencode/agents/ideator.md`
+   - `.opencode/agents/solver.md`
    If any is missing, list the missing paths and stop.
 3. Build the model options from live data, never from hardcoded IDs:
    - Run `opencode models` and use its output.
